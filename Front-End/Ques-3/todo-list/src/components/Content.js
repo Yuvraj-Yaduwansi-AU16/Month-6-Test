@@ -1,10 +1,10 @@
 import React, { useRef, useState } from 'react';
-import { Button, Container, Form } from 'react-bootstrap';
+import { Button, Container, Form, Card } from 'react-bootstrap';
 import uuid from 'react-uuid';
 import ToDoItem from './ToDoItem';
 function Content() {
   const [text, setText] = useState([]);
-  const [edit, setEdit] = useState(false);
+  const [edit, setEdit] = useState('');
   const textRef = useRef();
   const editText = useRef();
   const handleSubmit = (e) => {
@@ -17,10 +17,13 @@ function Content() {
 
   const handleEdit = (e) => {
     e.preventDefault();
-    if (editText === '') return;
-    else {
-      setEdit([...text, textRef.current.value]);
+    let todos = [...text];
+    let index = todos.indexOf(textRef.current.value);
+    if (index !== -1) {
+      todos[index] = editText.current.value;
     }
+    setText(todos);
+    setEdit('');
   };
   const onClick = (e) => {
     e.preventDefault();
@@ -33,6 +36,7 @@ function Content() {
   };
 
   const editTodo = (e) => {
+    textRef.current.value = e.target.innerText;
     setEdit(e.target.innerText);
   };
   return (
@@ -59,9 +63,13 @@ function Content() {
       <Container>
         {text &&
           text.map((inputText) => (
-            <Container key={uuid()} className='d-flex flex-row'>
+            <Container
+              key={uuid()}
+              className='d-flex flex-row justify-content-between'
+            >
               {edit !== inputText ? (
                 <div
+                  className='mt-5'
                   id={inputText}
                   onClick={editTodo}
                   style={{ width: '800px' }}
@@ -69,32 +77,32 @@ function Content() {
                   <ToDoItem key={uuid()} value={inputText} />
                 </div>
               ) : (
-                <Form
-                  onSubmit={handleEdit}
-                  className='d-flex flex-row justify-content-center align-items-start'
-                >
-                  <Form.Group>
-                    <Form.Control
-                      type='text'
-                      placeholder='Enter an item'
-                      ref={editText}
-                      required
-                      style={{ width: '600px' }}
-                    />
-                  </Form.Group>
-                  <Button
-                    className='w-50'
-                    type='submit'
-                    style={{ width: '500px' }}
-                  >
-                    Edit To-Do
-                  </Button>
-                </Form>
+                <Container>
+                  <Card>
+                    <Card.Body>
+                      {' '}
+                      <Form
+                        onSubmit={handleEdit}
+                        className='d-flex flex-row justify-content-center align-items-start'
+                      >
+                        <Form.Group>
+                          <Form.Control
+                            type='text'
+                            placeholder='Enter an item'
+                            ref={editText}
+                            required
+                            style={{ width: '800px', height: '8vh' }}
+                          />
+                        </Form.Group>
+                      </Form>
+                    </Card.Body>
+                  </Card>
+                </Container>
               )}
 
               <Button
                 key={uuid()}
-                className='btn-danger w-25'
+                className='btn-danger w-25 mt-5'
                 value={inputText}
                 onClick={onClick}
               >
