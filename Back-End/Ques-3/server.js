@@ -11,9 +11,9 @@ const uuid = require('uuid');
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
-  cloud_name: 'djysy6iqo',
-  api_key: '599715825531386',
-  api_secret: 'A_8CJGM4yflJxFVArqK7w4fl2JY',
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
   secure: true,
 });
 
@@ -23,13 +23,6 @@ app.use(upload());
 
 // Route
 app.use('/upload', (req, res) => {
-  if (!req.files || !req.files.photo) {
-    return res.status(400).json({
-      success: false,
-      msg: 'send a file with photo as the name',
-    });
-  }
-
   if (req.files.photo.size >= 5000000) {
     return res.status(400).json({
       success: false,
