@@ -17,13 +17,19 @@ function Content() {
 
   const handleEdit = (e) => {
     e.preventDefault();
-    let todos = [...text];
-    let index = todos.indexOf(textRef.current.value);
-    if (index !== -1) {
-      todos[index] = editText.current.value;
-    }
-    setText(todos);
+    let todos = [
+      text.map((li, i) => {
+        if (i === parseInt(edit)) {
+          return editText.current.value;
+        } else {
+          return li;
+        }
+      }),
+    ];
+    setText(...todos);
     setEdit('');
+    console.log(text);
+    console.log(edit);
   };
   const onClick = (e) => {
     e.preventDefault();
@@ -37,7 +43,8 @@ function Content() {
 
   const editTodo = (e) => {
     textRef.current.value = e.target.innerText;
-    setEdit(e.target.innerText);
+    setEdit(e.target.parentElement.parentElement.parentElement.id);
+    console.log(e.target.parentElement.parentElement.parentElement.id);
   };
   return (
     <Container className=' m-5 d-flex flex-column justify-content-center align-items-center'>
@@ -62,19 +69,19 @@ function Content() {
       </Form>
       <Container>
         {text &&
-          text.map((inputText) => (
+          text.map((inputText, i) => (
             <Container
-              key={uuid()}
+              key={i}
               className='d-flex flex-row justify-content-between'
             >
-              {edit !== inputText ? (
+              {edit !== String(i) ? (
                 <div
                   className='mt-5'
-                  id={inputText}
+                  id={i}
                   onClick={editTodo}
                   style={{ width: '800px' }}
                 >
-                  <ToDoItem key={uuid()} value={inputText} />
+                  <ToDoItem value={inputText} />
                 </div>
               ) : (
                 <Container>
@@ -92,6 +99,7 @@ function Content() {
                             ref={editText}
                             required
                             style={{ width: '800px', height: '8vh' }}
+                            id={i}
                           />
                         </Form.Group>
                       </Form>
